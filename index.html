@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RucoyNexus</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo.png?v=2.1.5">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css?v=2.1.5">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Outfit & Montserrat already imported in styles.css -->
+  <style>
+    .view-section {
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    .hidden {
+      display: none !important;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Simple custom styles to make form rows prettier */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .text-success { color: var(--color-success) !important; }
+    .text-danger { color: var(--color-danger) !important; }
+    .text-warning { color: var(--accent-secondary) !important; }
+    
+    /* Inline skill details style */
+    .skill-card-sub {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      padding-top: 6px;
+      margin-top: 4px;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar backdrop for mobile overlay click to close -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- Mobile Top Navigation Bar -->
+  <header class="mobile-header-bar">
+    <button class="hamburger-btn" id="mobile-menu-toggle" aria-label="Abrir Menú">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="mobile-logo">
+      <div class="logo-icon" style="background: none; box-shadow: none; width: 32px; height: 32px;">
+        <img src="assets/images/logo.png" alt="RucoyNexus Logo" style="width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; border-radius: var(--radius-md);">
+      </div>
+      <span class="mobile-logo-text">RucoyNexus</span>
+    </div>
+  </header>
+
+  <div id="app-layout">
+    <!-- Left Navigation Sidebar -->
+    <aside id="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon" style="background: none; box-shadow: none;">
+          <img src="assets/images/logo.png" alt="RucoyNexus Logo" style="width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; border-radius: var(--radius-md);">
+        </div>
+        <span class="logo-text">RucoyNexus</span>
+      </div>
+
+      <!-- Main Navigation Menu -->
+      <ul class="nav-menu">
+
+        <li class="nav-item active" data-view="comparers">
+          <a href="#"><i class="fa-solid fa-magnifying-glass"></i><span>Buscar Jugador</span></a>
+        </li>
+        <li class="nav-item" data-view="guilds">
+          <a href="#"><i class="fa-solid fa-users-gear"></i><span>Buscar Guild</span></a>
+        </li>
+        <li class="nav-item" data-view="calculators">
+          <a href="#"><i class="fa-solid fa-calculator"></i><span>Calculadoras</span></a>
+        </li>
+        <li class="nav-item" data-view="puzzle">
+          <a href="#"><i class="fa-solid fa-compass"></i><span>Puzzle Nav</span></a>
+        </li>
+
+        <li class="nav-item" data-view="items" style="display: none;">
+          <a href="#"><i class="fa-solid fa-shield-halved"></i><span>Base de Datos de Ítems</span></a>
+        </li>
+
+      </ul>
+    </aside>
+
+    <!-- Main Content Panel Wrapper -->
+    <main id="content-wrapper">
+
+      <!-- Main Container for Dynamic Views -->
+      <div class="main-content">
+        <div id="view-container">
+
+
+
+          <!-- SECTION 2: PLAYER DETAILS -->
+          <section id="view-player-details" class="view-section hidden">
+            <div class="player-grid">
+              <!-- Player info left side card -->
+              <div class="card-panel player-info-card">
+                <div class="player-avatar" id="player-card-avatar">?</div>
+                <h2 id="player-card-name" style="margin-bottom: 4px; color: #fff;">-</h2>
+                <span class="badge badge-success" id="player-card-status" style="margin-bottom: 24px;">Offline</span>
+                
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Guild:</span>
+                  <span class="player-stat-value" id="player-card-guild">-</span>
+                </div>
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Nivel Base:</span>
+                  <span class="player-stat-value" id="player-card-level">-</span>
+                </div>
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Experiencia Total:</span>
+                  <span class="player-stat-value" id="player-card-total-xp">-</span>
+                </div>
+                <div class="player-stat-row" id="player-card-xp-next-container">
+                  <span class="player-stat-label">XP para subir:</span>
+                  <span class="player-stat-value" id="player-card-xp-next">-</span>
+                </div>
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Rango Global:</span>
+                  <span class="player-stat-value" id="player-card-rank">-</span>
+                </div>
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Vida (HP):</span>
+                  <span class="player-stat-value text-danger" id="player-card-hp">-</span>
+                </div>
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Maná (MP):</span>
+                  <span class="player-stat-value text-info" id="player-card-mp">-</span>
+                </div>
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Velocidad:</span>
+                  <span class="player-stat-value" id="player-card-speed">-</span>
+                </div>
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Oro en Banco:</span>
+                  <span class="player-stat-value text-warning" id="player-card-gold">-</span>
+                </div>
+                <div class="player-stat-row">
+                  <span class="player-stat-label">Nombres Anteriores:</span>
+                  <span class="player-stat-value" id="player-card-prev-names" style="font-size: 0.8rem; text-align: right; max-width: 150px; overflow-wrap: break-word;">-</span>
+                </div>
+              </div>
+
+              <!-- Player skill card & progression right side -->
+              <div style="display: flex; flex-direction: column; gap: 24px;">
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-dumbbell"></i>Estadísticas y Habilidades</h3>
+                  </div>
+                  <!-- Skills Grid -->
+                  <div class="skills-grid">
+                    <div class="skill-card">
+                      <div class="skill-card-header">
+                        <span class="skill-name"><i class="fa-solid fa-hand-fist"></i> Melee</span>
+                        <span class="skill-level" id="player-skill-melee">-</span>
+                      </div>
+                      <div class="skill-progress-bar-container">
+                        <div class="skill-progress-bar" id="player-skill-melee-progress"></div>
+                      </div>
+                      <div class="skill-card-sub">
+                        <span>Tiempo para subir: <strong id="player-skill-melee-time">-</strong></span>
+                        <span>Ticks: <strong id="player-skill-melee-ticks">-</strong></span>
+                      </div>
+                      <div class="skill-card-sub" style="margin-top: 0; padding-top: 2px;">
+                        <span>Rango: <strong id="player-skill-melee-rank">-</strong></span>
+                      </div>
+                    </div>
+
+                    <div class="skill-card">
+                      <div class="skill-card-header">
+                        <span class="skill-name"><i class="fa-solid fa-crosshairs"></i> Distance</span>
+                        <span class="skill-level" id="player-skill-dist">-</span>
+                      </div>
+                      <div class="skill-progress-bar-container">
+                        <div class="skill-progress-bar" id="player-skill-dist-progress"></div>
+                      </div>
+                      <div class="skill-card-sub">
+                        <span>Tiempo para subir: <strong id="player-skill-dist-time">-</strong></span>
+                        <span>Ticks: <strong id="player-skill-dist-ticks">-</strong></span>
+                      </div>
+                      <div class="skill-card-sub" style="margin-top: 0; padding-top: 2px;">
+                        <span>Rango: <strong id="player-skill-dist-rank">-</strong></span>
+                      </div>
+                    </div>
+
+                    <div class="skill-card">
+                      <div class="skill-card-header">
+                        <span class="skill-name"><i class="fa-solid fa-wand-magic-sparkles"></i> Magic</span>
+                        <span class="skill-level" id="player-skill-magic">-</span>
+                      </div>
+                      <div class="skill-progress-bar-container">
+                        <div class="skill-progress-bar" id="player-skill-magic-progress"></div>
+                      </div>
+                      <div class="skill-card-sub">
+                        <span>Tiempo para subir: <strong id="player-skill-magic-time">-</strong></span>
+                        <span>Ticks: <strong id="player-skill-magic-ticks">-</strong></span>
+                      </div>
+                      <div class="skill-card-sub" style="margin-top: 0; padding-top: 2px;">
+                        <span>Rango: <strong id="player-skill-magic-rank">-</strong></span>
+                      </div>
+                    </div>
+
+                    <div class="skill-card">
+                      <div class="skill-card-header">
+                        <span class="skill-name"><i class="fa-solid fa-shield-halved"></i> Defense</span>
+                        <span class="skill-level" id="player-skill-defense">-</span>
+                      </div>
+                      <div class="skill-progress-bar-container">
+                        <div class="skill-progress-bar" id="player-skill-defense-progress"></div>
+                      </div>
+                      <div class="skill-card-sub">
+                        <span>Tiempo para subir: <strong id="player-skill-defense-time">-</strong></span>
+                        <span>Ticks: <strong id="player-skill-defense-ticks">-</strong></span>
+                      </div>
+                      <div class="skill-card-sub" style="margin-top: 0; padding-top: 2px;">
+                        <span>Rango: <strong id="player-skill-defense-rank">-</strong></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Progression history chart -->
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-chart-line"></i>Historial de Progreso</h3>
+                    <div class="flex gap-2">
+                      <button class="tab-btn active" id="player-chart-lvl-btn">Nivel</button>
+                      <button class="tab-btn" id="player-chart-skills-btn">Habilidades</button>
+                    </div>
+                  </div>
+                  <!-- Chart Container -->
+                  <div id="player-progress-chart" style="min-height: 300px;"></div>
+                </div>
+
+                <!-- Historical progress records table -->
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-history"></i>Registro de Avances Diarios</h3>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="custom-table" id="player-history-table">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Nivel Base</th>
+                          <th>Exp Ganada</th>
+                          <th>Melee</th>
+                          <th>Distance</th>
+                          <th>Defense</th>
+                        </tr>
+                      </thead>
+                      <tbody id="player-history-tbody">
+                        <!-- History injected by app.js -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 3: CALCULATORS -->
+          <section id="view-calculators" class="view-section hidden">
+            <!-- Tabs -->
+            <div class="tab-header">
+              <button class="tab-btn active" data-tab="calc-skills"><i class="fa-solid fa-dumbbell"></i> Skills</button>
+              <button class="tab-btn" data-tab="calc-exp"><i class="fa-solid fa-star"></i> Experience</button>
+              <button class="tab-btn" data-tab="calc-monsters"><i class="fa-solid fa-dragon"></i> Monsters</button>
+
+            </div>
+
+            <!-- TAB 3.3: SKILLS CALCULATOR -->
+            <div id="calc-skills" class="tab-content active">
+
+              <div class="grid-2">
+                <!-- SKILL CALC 1: Time from skill to skill (SWAPPED TO FIRST POSITION!) -->
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-clock"></i> Tiempo para subir habilidad</h3>
+                  </div>
+                  <form id="calc-skills-form-1">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Habilidad inicial (min 55):</label>
+                        <input type="number" id="scalc-from" min="55" max="999" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Habilidad objetivo (min 56):</label>
+                        <input type="number" id="scalc-to" min="56" max="1000" required placeholder="Ej: 110">
+                      </div>
+                      <div class="form-group">
+                        <label>Tickrate (200-50400):</label>
+                        <input type="number" id="scalc-tickrate-1" min="200" max="50400" step="100" value="3600" required>
+                        <div class="quick-picks">
+                           <span class="quick-pick" data-val="3600">3600</span>
+                           <span class="quick-pick" data-val="14400">14400</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="scalc-result-1">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Tiempo total estimado:</div>
+                      <div class="calc-result-value" id="scalc-result-val-1">-</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SKILL CALC 2: Tickrate per hour (SWAPPED TO SECOND POSITION!) -->
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-gauge-high"></i> Calcular tickrate por hora</h3>
+                  </div>
+                  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                    El resultado incluye el entrenamiento offline.
+                  </p>
+                  <form id="calc-skills-form-tickrate">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Reg stamina (horas, 0-16):</label>
+                        <input type="number" id="scalc-regstam" min="0" max="16" required placeholder="Ej: 8">
+                      </div>
+                      <div class="form-group">
+                        <label>Green stamina (minutos, 0-120):</label>
+                        <input type="number" id="scalc-grstam" min="0" max="120" required placeholder="Ej: 60">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Bonus stamina (horas, 0-2):</label>
+                        <input type="number" id="scalc-bonstam" min="0" max="2" required placeholder="Ej: 0">
+                      </div>
+                      <div class="form-group">
+                        <label>Tickrate (2500-14400):</label>
+                        <input type="number" id="scalc-tickrate-input" min="2500" max="14400" step="100" value="3600" required>
+                        <div class="quick-picks">
+                          <span class="quick-pick" data-val="3600">3600</span>
+                          <span class="quick-pick" data-val="14400">14400</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="scalc-result-tickrate">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Tickrate por hora:</div>
+                      <div class="calc-result-value" id="scalc-result-val-tickrate">-</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SKILL CALC 3: Skill level at date -->
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-calendar-days"></i> Habilidad en fecha límite</h3>
+                  </div>
+                  <form id="calc-skills-form-2">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Habilidad inicial (min 55):</label>
+                        <input type="number" id="scalc-from-2" min="55" max="999" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Tickrate (200-50400):</label>
+                        <input type="number" id="scalc-tickrate-2" min="200" max="50400" step="100" value="3600" required>
+                        <div class="quick-picks">
+                          <span class="quick-pick" data-val="3600">3600</span>
+                          <span class="quick-pick" data-val="14400">14400</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Horas de entrenamiento diario (1-24):</label>
+                        <input type="number" id="scalc-hours-2" min="1" max="24" required placeholder="Ej: 2">
+                      </div>
+                      <div class="form-group">
+                        <label>Fecha límite:</label>
+                        <input type="date" id="scalc-date-2" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="scalc-result-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Nivel de habilidad obtenido:</div>
+                      <div class="calc-result-value" id="scalc-result-val-2">0</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SKILL CALC 4: Date for skill level -->
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-hourglass-half"></i> ¿Cuándo alcanzaré mi habilidad objetivo?</h3>
+                  </div>
+                  <form id="calc-skills-form-3">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Habilidad inicial (min 55):</label>
+                        <input type="number" id="scalc-from-3" min="55" max="999" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Tickrate (200-50400):</label>
+                        <input type="number" id="scalc-tickrate-3" min="200" max="50400" step="100" value="3600" required>
+                        <div class="quick-picks">
+                          <span class="quick-pick" data-val="3600">3600</span>
+                          <span class="quick-pick" data-val="14400">14400</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Horas de entrenamiento diario (1-24):</label>
+                        <input type="number" id="scalc-hours-3" min="1" max="24" required placeholder="Ej: 2">
+                      </div>
+                      <div class="form-group">
+                        <label>Habilidad objetivo (min 56):</label>
+                        <input type="number" id="scalc-to-3" min="56" max="1000" required placeholder="Ej: 110">
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="scalc-result-3">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Fecha estimada de obtención:</div>
+                      <div class="calc-result-value" id="scalc-result-val-3">-</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SKILL CALC 5: Daily hour for skill -->
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-fire"></i> ¿Cuántas horas diarias necesito para alcanzar mi skill?</h3>
+                  </div>
+                  <form id="calc-skills-form-4">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Habilidad inicial (min 55):</label>
+                        <input type="number" id="scalc-from-4" min="55" max="999" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Tickrate (200-50400):</label>
+                        <input type="number" id="scalc-tickrate-4" min="200" max="50400" step="100" value="3600" required>
+                        <div class="quick-picks">
+                          <span class="quick-pick" data-val="3600">3600</span>
+                          <span class="quick-pick" data-val="14400">14400</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Habilidad objetivo (min 56):</label>
+                        <input type="number" id="scalc-to-4" min="56" max="1000" required placeholder="Ej: 110">
+                      </div>
+                      <div class="form-group">
+                        <label>Fecha límite:</label>
+                        <input type="date" id="scalc-date-4" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="scalc-result-4">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Horas diarias necesarias:</div>
+                      <div class="calc-result-value" id="scalc-result-val-4">-</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3.2: EXP CALCULATOR -->
+            <div id="calc-exp" class="tab-content">
+              <div class="grid-2">
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-arrow-right-long"></i> Exp requerida entre niveles</h3>
+                  </div>
+                  <form id="calc-exp-form-1">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Nivel inicial (o Exp):</label>
+                        <input type="number" id="ecalc-from" min="1" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Nivel objetivo:</label>
+                        <input type="number" id="ecalc-to" min="1" required placeholder="Ej: 110">
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="ecalc-result-1">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Experiencia total requerida:</div>
+                      <div class="calc-result-value" id="ecalc-result-val-1">0</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-calendar-days"></i> Nivel estimado en fecha planificada</h3>
+                  </div>
+                  <form id="calc-exp-form-2">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Nivel inicial:</label>
+                        <input type="number" id="ecalc-from-2" min="1" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Exp diaria (kk/h, ej: 2.5 = 2.5kk/h):</label>
+                        <input type="number" id="ecalc-daily" step="0.001" min="0.001" required placeholder="Ej: 5.0">
+                      </div>
+                      <div class="form-group">
+                        <label>Fecha límite:</label>
+                        <input type="date" id="ecalc-date" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="ecalc-result-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Nivel obtenido en esa fecha:</div>
+                      <div class="calc-result-value" id="ecalc-result-val-2">0</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-hourglass-half"></i> ¿Cuándo alcanzaré mi nivel objetivo?</h3>
+                  </div>
+                  <form id="calc-exp-form-3">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Nivel inicial:</label>
+                        <input type="number" id="ecalc-from-3" min="1" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Exp diaria (kk/h, ej: 2.5):</label>
+                        <input type="number" id="ecalc-daily-3" step="0.001" min="0.001" required placeholder="Ej: 5.0">
+                      </div>
+                      <div class="form-group">
+                        <label>Nivel objetivo:</label>
+                        <input type="number" id="ecalc-to-3" min="1" required placeholder="Ej: 150">
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="ecalc-result-3">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Fecha estimada de obtención:</div>
+                      <div class="calc-result-value" id="ecalc-result-val-3">-</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-fire"></i> ¿Cuánta exp diaria necesito para un nivel en una fecha?</h3>
+                  </div>
+                  <form id="calc-exp-form-4">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Nivel inicial (o Exp):</label>
+                        <input type="number" id="ecalc-from-4" min="1" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Nivel objetivo:</label>
+                        <input type="number" id="ecalc-to-4" min="1" required placeholder="Ej: 150">
+                      </div>
+                      <div class="form-group">
+                        <label>Fecha objetivo:</label>
+                        <input type="date" id="ecalc-date-4" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="ecalc-result-4">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Exp diaria necesaria (kk/h):</div>
+                      <div class="calc-result-value" id="ecalc-result-val-4">0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3.1: MONSTERS CALCULATOR -->
+            <div id="calc-monsters" class="tab-content">
+              <div class="grid-2">
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-dragons"></i> ¿Cuántos monstruos necesito matar?</h3>
+                  </div>
+                  <form id="calc-monsters-form-1">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Nivel inicial:</label>
+                        <input type="number" id="mcalc-from" min="1" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Nivel objetivo:</label>
+                        <input type="number" id="mcalc-to" min="1" required placeholder="Ej: 110">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Monstruo:</label>
+                        <select id="mcalc-monster">
+                          <!-- Injected by app.js -->
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Participantes en party (1-5):</label>
+                        <input type="number" id="mcalc-part" min="1" max="5" value="1" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="mcalc-result-1">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Monstruos necesarios:</div>
+                      <div class="calc-result-value" id="mcalc-result-val-1">0</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-arrow-trend-up"></i> ¿Qué nivel obtendré tras matar X monstruos?</h3>
+                  </div>
+                  <form id="calc-monsters-form-2">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Nivel inicial (o Exp):</label>
+                        <input type="number" id="mcalc-from-2" min="1" required placeholder="Ej: 100">
+                      </div>
+                      <div class="form-group">
+                        <label>Cantidad a matar:</label>
+                        <input type="number" id="mcalc-amount" min="1" required placeholder="Ej: 10000">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Monstruo:</label>
+                        <select id="mcalc-monster-2">
+                          <!-- Injected by app.js -->
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Participantes en party (1-5):</label>
+                        <input type="number" id="mcalc-part-2" min="1" max="5" value="1" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-calculator"></i> Calcular</button>
+                  </form>
+                  <div class="calc-result-box hidden" id="mcalc-result-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">Nivel final aproximado:</div>
+                      <div class="calc-result-value" id="mcalc-result-val-2">0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+          </section>
+
+          <!-- SECTION 9: PUZZLE SOLVER -->
+          <section id="view-puzzle" class="view-section hidden">
+            <div style="max-width: 600px; margin: 0 auto;">
+              <div class="card-panel">
+                <div class="card-title-bar" style="text-align: center; justify-content: center; margin-bottom: 20px;">
+                  <h2 style="color: #fff; font-size: 1.5rem; font-weight: 700;"><i class="fa-solid fa-compass" style="color: var(--accent-primary); margin-right: 10px;"></i> Puzzle de Navegación</h2>
+                </div>
+                
+                <p id="puzzle-instruction" style="text-align: center; color: var(--text-secondary); margin-bottom: 24px; font-size: 0.95rem;">
+                  Selecciona el nodo de origen
+                </p>
+
+                <!-- Legend -->
+                <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; font-size: 0.85rem;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 14px; height: 14px; border-radius: 4px; background: rgba(16, 185, 129, 0.2); border: 2px solid var(--color-success);"></div>
+                    <span style="color: var(--text-secondary);">Origen</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 14px; height: 14px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); border: 2px solid var(--color-info);"></div>
+                    <span style="color: var(--text-secondary);">Destino</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 14px; height: 14px; border-radius: 4px; background: rgba(16, 185, 129, 0.05); border: 2px solid rgba(16, 185, 129, 0.35);"></div>
+                    <span style="color: var(--text-secondary);">Ruta</span>
+                  </div>
+                </div>
+
+                <!-- Grid -->
+                <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+                  <div id="puzzle-grid" style="
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 10px;
+                    max-width: 450px;
+                    width: 100%;
+                  ">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- Error Box (No path) -->
+                <div id="puzzle-error-box" class="hidden" style="
+                  background: rgba(244, 63, 94, 0.1);
+                  border: 1px solid var(--color-danger);
+                  color: var(--color-danger);
+                  padding: 12px;
+                  border-radius: var(--radius-md);
+                  text-align: center;
+                  font-size: 0.9rem;
+                  margin-bottom: 20px;
+                ">
+                  <i class="fa-solid fa-triangle-exclamation" style="margin-right: 6px;"></i>
+                  No existe ruta entre estos nodos
+                </div>
+
+                <!-- Directions Display -->
+                <div id="puzzle-directions-box" class="hidden" style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 16px;
+                  margin-bottom: 24px;
+                ">
+                  <div id="puzzle-arrows-container" style="
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    gap: 12px;
+                    background: rgba(0, 0, 0, 0.2);
+                    border: 1px solid var(--border-color);
+                    padding: 16px;
+                    border-radius: var(--radius-md);
+                    width: 100%;
+                  ">
+                    <!-- Populated dynamically -->
+                  </div>
+                  <p id="puzzle-path-text" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;"></p>
+                </div>
+
+                <!-- Reset Button -->
+                <div style="display: flex; justify-content: center;">
+                  <button id="puzzle-reset-btn" class="pagination-btn" style="
+                    padding: 10px 24px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                  ">
+                    <i class="fa-solid fa-rotate-left"></i> Reiniciar
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+
+
+
+
+          <!-- SECTION 5: ITEMS DATABASE -->
+          <section id="view-items" class="view-section hidden">
+            <!-- Filter for items -->
+            <div class="card-panel mb-4">
+              <div class="card-title-bar">
+                <h3><i class="fa-solid fa-filter"></i> Filtrar Objetos</h3>
+              </div>
+              <div class="filter-bar" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+                <div class="filter-group" style="flex: 1; min-width: 200px;">
+                  <label for="item-filter-search">Buscar Objeto:</label>
+                  <input type="text" id="item-filter-search" placeholder="Escribe el nombre del objeto..." style="width: 100%; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); background: rgba(0,0,0,0.2); color: #fff; font-size: 0.9rem;">
+                </div>
+                <div class="filter-group" style="min-width: 150px;">
+                  <label for="item-filter-category">Categoría:</label>
+                  <select id="item-filter-category" style="width: 100%; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); background: rgba(0,0,0,0.2); color: #fff; font-size: 0.9rem;">
+                    <option value="">Cualquiera</option>
+                    <option value="Helmet">Cascos</option>
+                    <option value="Armor">Armaduras (Pechera)</option>
+                    <option value="Pants">Pantalones</option>
+                    <option value="Boots">Botas</option>
+                    <option value="Shield">Escudos</option>
+                    <option value="Sword">Espadas</option>
+                    <option value="Bow">Arcos</option>
+                    <option value="Staff">Bastones</option>
+                    <option value="Necklace">Collares</option>
+                    <option value="Ring">Anillos</option>
+                    <option value="Backpack">Mochilas</option>
+                    <option value="Key">Llaves</option>
+                    <option value="Potion">Pociones</option>
+                  </select>
+                </div>
+                <div class="filter-group" style="min-width: 150px;">
+                  <label for="item-filter-quality">Calidad:</label>
+                  <select id="item-filter-quality" style="width: 100%; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); background: rgba(0,0,0,0.2); color: #fff; font-size: 0.9rem;">
+                    <option value="">Cualquiera</option>
+                    <option value="Common">Común (Gris)</option>
+                    <option value="CommonYellow">Común (Amarillo)</option>
+                    <option value="CommonOrange">Común (Naranja)</option>
+                    <option value="CommonRed">Común (Rojo)</option>
+                    <option value="Rare">Raro (Azul Claro)</option>
+                    <option value="Blue">Raro (Azul)</option>
+                    <option value="Green">Épico (Verde)</option>
+                    <option value="Ultra Rare">Ultra Raro (Rosa)</option>
+                    <option value="Legendary">Legendario (Amarillo/Oro)</option>
+                    <option value="Mythic">Mítico (Púrpura/Rojo)</option>
+                  </select>
+                </div>
+                <div class="filter-group" style="min-width: 150px;">
+                  <label for="item-filter-attribute">Atributo:</label>
+                  <select id="item-filter-attribute" style="width: 100%; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); background: rgba(0,0,0,0.2); color: #fff; font-size: 0.9rem;">
+                    <option value="">Cualquiera</option>
+                    <option value="Level">Nivel requerido</option>
+                    <option value="Attack">Ataque</option>
+                    <option value="Armor">Armadura</option>
+                    <option value="Melee">Melee</option>
+                    <option value="Distance">Distancia</option>
+                    <option value="Magic">Magia</option>
+                    <option value="Defense">Defensa</option>
+                    <option value="Speed">Velocidad</option>
+                    <option value="Capacity">Capacidad (Mochila)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card-panel">
+                <div class="card-title-bar">
+                  <h3><i class="fa-solid fa-hand-fist"></i> Objetos del Juego</h3>
+                </div>
+                <div class="table-responsive">
+                  <table class="custom-table" id="items-table">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Calidad</th>
+                        <th>Detalles</th>
+                      </tr>
+                    </thead>
+                    <tbody id="items-tbody">
+                      <!-- Loaded via app.js -->
+                    </tbody>
+                  </table>
+                </div>
+                <div style="display: flex; justify-content: center; margin-top: 16px;">
+                  <button id="items-load-more-btn" class="pagination-btn" style="display: none; padding: 10px 20px;"><i class="fa-solid fa-arrow-down"></i> Cargar más objetos</button>
+                </div>
+              </div>
+
+              <div class="card-panel">
+                <div class="card-title-bar">
+                  <h3><i class="fa-solid fa-skull"></i> Dropeos de Jefes (Bosses)</h3>
+                </div>
+                <div class="table-responsive">
+                  <table class="custom-table" id="boss-items-table">
+                    <thead>
+                      <tr>
+                        <th>Jefe (Boss)</th>
+                        <th>Objetos Dropeados</th>
+                      </tr>
+                    </thead>
+                    <tbody id="boss-items-tbody">
+                      <!-- Loaded via app.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+          <!-- SECTION 8: PLAYER SEARCH (Redesigned from Comparers) -->
+          <section id="view-comparers" class="view-section hidden">
+            <div class="grid-2">
+              <!-- Search and Profile Card -->
+              <div style="display: flex; flex-direction: column; gap: 24px;">
+                <div class="card-panel">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-magnifying-glass"></i> Buscar Jugador</h3>
+                  </div>
+                  <form id="search-player-form">
+                    <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 0;">
+                      <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <input type="text" id="search-play-name" required placeholder="" style="width: 100%;">
+                      </div>
+                      <button type="submit" class="btn-primary" style="margin-top: 0; padding: 12px 24px;"><i class="fa-solid fa-search"></i> Buscar</button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Profile Result Card (hidden by default) -->
+                <div class="card-panel hidden" id="search-profile-card">
+                  <div class="player-info-header" style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 16px;">
+                    <div class="player-avatar" id="search-avatar" style="width: 60px; height: 60px; font-size: 1.5rem; background: radial-gradient(circle, var(--accent-primary) 0%, #1e1b4b 100%); display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); font-weight: 700; color: #fff;">?</div>
+                    <div>
+                      <h2 id="search-name" style="margin: 0; color: #fff; font-size: 1.5rem;">-</h2>
+                      <span class="badge" id="search-status">Offline</span>
+                    </div>
+                  </div>
+                  
+                  <div class="player-stat-row">
+                    <span class="player-stat-label">Título:</span>
+                    <span class="player-stat-value" id="search-title" style="color: var(--accent-secondary); font-weight: 600;">-</span>
+                  </div>
+                  <div class="player-stat-row">
+                    <span class="player-stat-label">Clan (Guild):</span>
+                    <span class="player-stat-value" id="search-guild">-</span>
+                  </div>
+                  <div class="player-stat-row">
+                    <span class="player-stat-label">Nivel Base:</span>
+                    <span class="player-stat-value text-success" id="search-level" style="font-weight: 700; font-size: 1.1rem;">-</span>
+                  </div>
+                  <div class="player-stat-row">
+                    <span class="player-stat-label">Fecha de Nacimiento:</span>
+                    <span class="player-stat-value" id="search-born">-</span>
+                  </div>
+                  <div class="player-stat-row" style="margin-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px;">
+                    <span class="player-stat-label">Última vez en línea:</span>
+                    <span class="player-stat-value" id="search-last-online">-</span>
+                  </div>
+
+                  <!-- Database stats if found (hidden by default) -->
+                  <div id="search-db-stats-card" class="hidden" style="margin-top: 12px;">
+                    <div style="font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                      <i class="fa-solid fa-dumbbell text-success"></i> Habilidades Registradas
+                    </div>
+                    <div class="skills-grid" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">
+                      <div class="skill-card" style="padding: 8px; text-align: center; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);"><i class="fa-solid fa-hand-fist" style="color: #ef4444;"></i> Melee</div>
+                        <div id="search-skill-melee" style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-top: 2px;">-</div>
+                      </div>
+                      <div class="skill-card" style="padding: 8px; text-align: center; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);"><i class="fa-solid fa-crosshairs" style="color: #10b981;"></i> Dist</div>
+                        <div id="search-skill-dist" style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-top: 2px;">-</div>
+                      </div>
+                      <div class="skill-card" style="padding: 8px; text-align: center; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);"><i class="fa-solid fa-wand-magic-sparkles" style="color: #3b82f6;"></i> Magic</div>
+                        <div id="search-skill-magic" style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-top: 2px;">-</div>
+                      </div>
+                      <div class="skill-card" style="padding: 8px; text-align: center; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);"><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> Def</div>
+                        <div id="search-skill-defense" style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-top: 2px;">-</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Official classification (hidden by default) -->
+                <div class="card-panel hidden" id="search-official-stats-card">
+                  <div class="card-title-bar">
+                    <h3><i class="fa-solid fa-trophy"></i> Clasificación Oficial del Mes</h3>
+                  </div>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.4;">
+                    Si el jugador está en el Top 100 de su mes de nacimiento (<span id="search-official-date-label"></span>), sus estadísticas públicas aparecerán aquí.
+                  </p>
+                  
+                  <div class="table-responsive">
+                    <table class="custom-table" style="font-size: 0.85rem;">
+                      <thead>
+                        <tr>
+                          <th>Habilidad</th>
+                          <th>Rango (Top 100)</th>
+                          <th>Valor</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style="font-weight: 600; color: #fff;"><i class="fa-solid fa-star" style="color: var(--accent-primary); margin-right: 6px;"></i> Nivel / Exp</td>
+                          <td id="search-off-rank-exp">-</td>
+                          <td id="search-off-val-exp">-</td>
+                        </tr>
+                        <tr>
+                          <td style="font-weight: 600; color: #fff;"><i class="fa-solid fa-hand-fist" style="color: #ef4444; margin-right: 6px;"></i> Melee</td>
+                          <td id="search-off-rank-melee">-</td>
+                          <td id="search-off-val-melee">-</td>
+                        </tr>
+                        <tr>
+                          <td style="font-weight: 600; color: #fff;"><i class="fa-solid fa-crosshairs" style="color: #10b981; margin-right: 6px;"></i> Distance</td>
+                          <td id="search-off-rank-dist">-</td>
+                          <td id="search-off-val-dist">-</td>
+                        </tr>
+                        <tr>
+                          <td style="font-weight: 600; color: #fff;"><i class="fa-solid fa-wand-magic-sparkles" style="color: #3b82f6; margin-right: 6px;"></i> Magic</td>
+                          <td id="search-off-rank-magic">-</td>
+                          <td id="search-off-val-magic">-</td>
+                        </tr>
+                        <tr>
+                          <td style="font-weight: 600; color: #fff;"><i class="fa-solid fa-shield-halved" style="color: #fbbf24; margin-right: 6px;"></i> Defense</td>
+                          <td id="search-off-rank-defense">-</td>
+                          <td id="search-off-val-defense">-</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PvP Activity Logs -->
+              <div class="card-panel hidden" id="search-pvp-card">
+                <div class="card-title-bar">
+                  <h3><i class="fa-solid fa-skull-crossbones"></i> Actividad de PvP (Kills / Deaths)</h3>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto; padding-right: 8px;">
+                  <ul class="pvp-logs-list" id="search-pvp-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Injected dynamically -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 8A: GUILD SEARCH TAB -->
+          <section id="view-guilds" class="view-section hidden">
+            <div style="max-width: 600px; margin: 40px auto;">
+              <div class="card-panel">
+                <div class="card-title-bar" style="text-align: center; justify-content: center; margin-bottom: 20px;">
+                  <h2 style="color: #fff; font-size: 1.6rem; font-weight: 700;"><i class="fa-solid fa-users-gear" style="color: #fbbf24; margin-right: 10px;"></i> Buscar Guild</h2>
+                </div>
+                <form id="search-guild-form" onsubmit="event.preventDefault();" style="display: flex; gap: 10px;">
+                  <input type="text" id="search-guild-input-name" placeholder="" style="flex: 1; padding: 12px 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.95rem; font-weight: 600;" required>
+                  <button type="submit" class="pagination-btn" style="margin: 0; padding: 12px 24px; background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: #000; font-weight: 700; border-radius: var(--radius-md); font-size: 0.95rem; border: none; cursor: pointer; transition: transform 0.15s;">
+                    Buscar <i class="fa-solid fa-magnifying-glass" style="margin-left: 4px;"></i>
+                  </button>
+                </form>
+                <div id="search-guild-error-banner" class="hidden" style="margin-top: 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 12px; border-radius: var(--radius-md); text-align: center; font-size: 0.85rem;">
+                  Gremio no encontrado. Por favor verifica que el nombre esté escrito exactamente igual que en el juego.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 8B: GUILD PROFILE -->
+          <section id="view-guild-details" class="view-section hidden">
+            <!-- Back Button and Header -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 16px;">
+              <button onclick="switchView('player-details')" class="pagination-btn" style="padding: 8px 16px; margin: 0; background: rgba(255,255,255,0.05); font-size: 0.85rem;">
+                <i class="fa-solid fa-arrow-left"></i> Volver a Personaje
+              </button>
+              <h2 id="guild-title-header" style="color: #fff; margin: 0; font-size: 1.5rem; font-weight: 700; flex: 1;">Perfil de Gremio</h2>
+            </div>
+
+            <div class="grid-3">
+              <!-- Left Panel: Guild Stats Summary -->
+              <div class="card-panel" style="grid-column: span 1;">
+                <div class="card-title-bar">
+                  <h3><i class="fa-solid fa-shield-halved"></i> Información</h3>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px; padding: 10px 0;">
+                  <!-- Avatar representativo del clan -->
+                  <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                    <div id="guild-avatar" style="width: 80px; height: 80px; border-radius: 50%; font-size: 2.2rem; font-weight: 700; color: #fff; background: radial-gradient(circle, #fbbf24 0%, #d97706 100%); border: 3px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px rgba(217, 119, 6, 0.3); display: flex; align-items: center; justify-content: center;">
+                      G
+                    </div>
+                  </div>
+
+                  <div style="text-align: center;">
+                    <h2 id="guild-name-main" style="color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 6px;">Cargando Gremio...</h2>
+                    <p id="guild-created-date" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">Creado el: -</p>
+                  </div>
+
+                  <div style="background: rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.03); border-radius: var(--radius-md); padding: 12px 16px;">
+                    <span style="display: block; font-size: 0.75rem; font-weight: 700; color: #a3a3a3; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.05em;">Descripción</span>
+                    <p id="guild-description-val" style="color: #cbd5e1; font-size: 0.85rem; font-style: italic; line-height: 1.4; margin: 0;">-</p>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 8px;">
+                      <span style="font-size: 0.85rem; color: #9ca3af;">
+                        <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px #10b981;"></span>
+                        Miembros Online
+                      </span>
+                      <strong id="guild-online-count" style="font-size: 0.95rem; color: #10b981;">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 8px;">
+                      <span style="font-size: 0.85rem; color: #9ca3af;"><i class="fa-solid fa-users"></i> Miembros totales</span>
+                      <strong id="guild-members-count" style="font-size: 0.95rem; color: #fff;">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <span style="font-size: 0.85rem; color: #9ca3af;"><i class="fa-solid fa-star"></i> Promedio Nivel</span>
+                      <strong id="guild-average-level" style="font-size: 0.95rem; color: #fbbf24;">0</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Panel: Members List Table -->
+              <div class="card-panel" style="grid-column: span 2; overflow: visible;">
+                <div class="card-title-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                  <h3><i class="fa-solid fa-list-ol"></i> Miembros del Clan</h3>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="guild-members-search" placeholder="Filtrar miembros..." style="padding: 6px 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); background: rgba(0,0,0,0.2); color: #fff; font-size: 0.8rem; width: 160px;">
+                  </div>
+                </div>
+
+                <div class="guild-members-table-wrap">
+                  <table class="custom-table">
+                    <thead>
+                      <tr>
+                        <th style="width: 40px; text-align: center;">#</th>
+                        <th>Nombre</th>
+                        <th>Rango</th>
+                        <th style="text-align: right;">Nivel</th>
+                        <th style="text-align: right;">Fecha Ingreso</th>
+                      </tr>
+                    </thead>
+                    <tbody id="guild-members-tbody">
+                      <tr><td colspan="5" class="text-center color-muted">Cargando lista de miembros...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ApexCharts CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <!-- Static Data Tables -->
+  <script src="data_tables.js"></script>
+  <!-- Application JS Code -->
+
+  <script src="app.js?v=2.1.5"></script>
+</body>
+</html>
